@@ -8,10 +8,15 @@
   document.body.insertBefore(container, document.body.firstChild);
 
 
+
   // ─── Scroll Reveal Animation ───
-  // Wait for next frame to ensure DOM is rendered, then observe .reveal elements
+  // Elements below the fold get animate-ready class and animate on scroll
+  // Elements above the fold stay visible immediately
   requestAnimationFrame(function() {
     setTimeout(function() {
+      var viewportHeight = window.innerHeight;
+      var revealElements = document.querySelectorAll('.reveal');
+      
       var revealObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
@@ -19,13 +24,18 @@
             revealObserver.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+      }, { threshold: 0.05, rootMargin: '0px 0px -10px 0px' });
 
-      var revealElements = document.querySelectorAll('.reveal');
       revealElements.forEach(function(el) {
-        revealObserver.observe(el);
+        var rect = el.getBoundingClientRect();
+        if (rect.top > viewportHeight) {
+          // Below fold: add animate-ready for scroll animation
+          el.classList.add('animate-ready');
+          revealObserver.observe(el);
+        }
+        // Above fold: already visible via CSS default (opacity:1)
       });
-    }, 100);
+    }, 50);
   });
 
   
