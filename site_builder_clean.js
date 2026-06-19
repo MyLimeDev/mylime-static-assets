@@ -6,6 +6,25 @@
   
   // Insert at the beginning of body
   document.body.insertBefore(container, document.body.firstChild);
+
+
+  // ─── Scroll Reveal Animation ───
+  // Observe all .reveal elements and add .visible class when they enter viewport
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target); // Stop observing once visible
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  // Observe all elements with .reveal class
+  var revealElements = container.querySelectorAll('.reveal');
+  revealElements.forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
   
   // Load translations first
   var transScript = document.createElement('script');
