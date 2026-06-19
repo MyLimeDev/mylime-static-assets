@@ -9,20 +9,23 @@
 
 
   // ─── Scroll Reveal Animation ───
-  // Observe all .reveal elements and add .visible class when they enter viewport
-  var revealObserver = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target); // Stop observing once visible
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  // Wait for next frame to ensure DOM is rendered, then observe .reveal elements
+  requestAnimationFrame(function() {
+    setTimeout(function() {
+      var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
 
-  // Observe all elements with .reveal class
-  var revealElements = container.querySelectorAll('.reveal');
-  revealElements.forEach(function(el) {
-    revealObserver.observe(el);
+      var revealElements = document.querySelectorAll('.reveal');
+      revealElements.forEach(function(el) {
+        revealObserver.observe(el);
+      });
+    }, 100);
   });
 
   
