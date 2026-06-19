@@ -39,13 +39,32 @@
   });
 
   
-  // Load translations first
-  var transScript = document.createElement('script');
-  document.body.appendChild(transScript);
-  
-  // Load main app scripts after translations
-  transScript.onload = function() {
-    var appScript = document.createElement('script');
-    document.body.appendChild(appScript);
+  // Define switchLang globally (translations handler)
+  window.switchLang = function(lang) {
+    localStorage.setItem('ml_lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+    // Update active button
+    var btns = document.querySelectorAll('.lang-btn');
+    btns.forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+    // Translate elements with data-i18n attribute
+    if (window.translations && window.translations[lang]) {
+      var t = window.translations[lang];
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (t[key]) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = t[key];
+          } else {
+            el.textContent = t[key];
+          }
+        }
+      });
+    }
   };
+  // Load popup handler (carousel, FAQ, mobile menu, etc.)
+  var appScript = document.createElement('script');
+  appScript.src = 'https://mylimedev.github.io/mylime-static-assets/popup_handler_clean.js';
+  document.body.appendChild(appScript);
 })();
